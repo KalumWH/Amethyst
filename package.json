@@ -8,6 +8,10 @@
     "download-java": "sudo apt install openjdk-11-jre-headless",
     "start-ll": "java -jar Lavalink.jar"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Iskawo/Amethyst"
+  },
   "author": "Iskawo",
   "license": "ISC",
   "dependencies": {
