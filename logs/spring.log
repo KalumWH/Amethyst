@@ -3386,3 +3386,9 @@ Caused by: java.lang.InterruptedException: null
 2020-03-05 20:34:38.218  INFO 26803 --- [XNIO-1 task-43] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /127.0.0.1:46702
 2020-03-05 20:34:38.221  INFO 26803 --- [XNIO-1 task-43] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
 2020-03-05 20:34:38.224  INFO 26803 --- [XNIO-1 task-43] lavalink.server.io.SocketServer          : Connection successfully established from /127.0.0.1:46702
+2020-03-05 20:35:02.987  INFO 26803 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : Connection closed from /127.0.0.1:46702 -- CloseStatus[code=1006, reason=]
+2020-03-05 20:35:02.988  INFO 26803 --- [XNIO-1 I/O-2] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2020-03-05 20:35:02.989  INFO 26803 --- [XNIO-1 I/O-2] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2020-03-05 20:35:03.001  INFO 26803 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2020-03-05 20:35:03.002  INFO 26803 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2020-03-05 20:35:03.039  INFO 26803 --- [Thread-1] io.undertow.servlet                      : Destroying Spring FrameworkServlet 'dispatcherServlet'
