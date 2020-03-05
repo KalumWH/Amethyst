@@ -1,4 +1,5 @@
 const { PlayerManager } = require("./src/index");
+const { KSoftClient } = require('@aero/ksoft');
 const { Client } = require("discord.js");
 const config = require('./config.json');
 const discord = require('discord.js');
@@ -22,6 +23,8 @@ class MusicClient extends Client {
         }).on("error", console.error).on("warn", console.warn);
     }
 }
+
+const ksoft = new KSoftClient(config.api.ksoft);
 const client = new MusicClient();
 let queues = {};
 let loops = {};
@@ -37,7 +40,8 @@ module.exports = {
 	prefix: config.prefix,
 	timestamp: timestamp,
 	queues: queues,
-	loops: loops
+    loops: loops,
+    ksoft: ksoft
 };
 
 //! Login to discord

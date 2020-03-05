@@ -34,13 +34,27 @@ module.exports.run = async (client, message, args) => {
              .setDescription('No music is being played in this guild')
         return message.channel.send(embed);
     }
+
+    let queueLength = (queue) => {
+        let array = [];
+        queue.forEach(video => {
+            array.push(video.info.length)
+        })
+        let addition = array.reduce(function(a, b) {
+            return a + b;
+        }, 0);
+        return getYTLength(addition);
+    }
     
     const text = queue.map((video, index) => 
-        (`\`${(index + 1)}.\` ${video.info.title} - ${trimString(video.info.author, 15)} [**${getYTLength(video.info.length)}**]`))
+        // console.log(`\`${(index + 1)}.\` ${video.info.author} - ${trimString(video.info.title, 25)} [**${getYTLength(video.info.length)}**]`)
+        (`\`${(index + 1)}.\` ${video.info.author} - ${trimString(video.info.title, 25)} [**${getYTLength(video.info.length)}**]`))
         // ('\`' + (index + 1) + '.\` ' + video.info.title + ` (**${getYTLength(video.info.length)}**)`))
+        .filter((e, i) => i < 10)
         .join('\n');
-    embed.setTitle(`${message.guild.name} Queue`)
-    .setDescription(`${text}`)
+    embed.setTitle(`${message.guild.name} Queue **[**Total time: ${queueLength(queue)}**]**`)
+         .setDescription(`${text}`)
+         .setFooter(`Showing ${queue.length >= 10 ? '10' : queue.length} of ${queue.length} songs`)
     return message.channel.send(embed)
 
 }

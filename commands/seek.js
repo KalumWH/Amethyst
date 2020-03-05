@@ -46,6 +46,11 @@ module.exports.run = async (client, message, args) => {
              .setDescription(':x: **You must define a position in seconds**')
         return message.channel.send(embed);
     }
+    if (pos > queue[0].info.length) {
+        embed.setTitle('Failed')
+             .setDescription(':x: **You can\'t seek further than the song length**')
+        return message.channel.send(embed);
+    }
     let done_embed = new MessageEmbed()
         .setTimestamp()
         .setTitle('Success')

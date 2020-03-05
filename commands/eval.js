@@ -1,5 +1,6 @@
 const discord = require("discord.js");
 const config = require('../config.json');
+const { client, queues, loops } = require('../app.js');
 
 module.exports.run = async (client, message, args) => {
   if (message.author.id !== config.owner) {
@@ -14,7 +15,7 @@ module.exports.run = async (client, message, args) => {
     // const { flagArgs } = message;
     // if ('silent' in message.flagArgs) return null;
     if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
-    if (evaled.includes(process.env.TOKEN)) evaled = '\`\`\`js\n[REDACTED]\`\`\`';
+    if (evaled.includes(config.token)) evaled = '[REDACTED]';
     let evalResponse = [
       '**Output**:',
       `\`\`\`js\n${evaled}\`\`\``,

@@ -5,14 +5,13 @@ const config = require('../config.json');
 const axios = require("axios");
 
 module.exports.run = async (client, message, args) => {
-    if (!message.member.voice.channel.id) {
-        embed.setTitle('Failed')
-             .setDescription(':x: **Please join a voice channel first**')
+    const embed = new MessageEmbed().setTimestamp();
+    if (!message.member.voice.channel) {
+        embed.setDescription(':x: **Please join a voice channel first**')
         return message.channel.send(embed);
     }
     if (client.player.get(message.guild.id) && message.member.voice.channel.id !== message.guild.members.cache.get(message.guild.me.id).voice.channel.id) {
-        let newEmbed = new MessageEmbed().setTitle('Failed')
-             .setDescription(':x: **You\'re not in the playing voice channel!**')
+        let newEmbed = new MessageEmbed().setDescription(':x: **You\'re not in the playing voice channel!**')
         return message.channel.send(newEmbed);
     }
     const defaultRegions = {
@@ -77,15 +76,15 @@ module.exports.run = async (client, message, args) => {
     }
     let execQueue = async (message, queue, player) => {
         player.play(queue[0].track);
-        const embed = new MessageEmbed().setTimestamp();
-        embed.setTitle('🎵 Now playing!')
-            .setThumbnail(`https://i.ytimg.com/vi/${queue[0].info.identifier}/hqdefault.jpg`)
-            .addFields({
-                name: "Author", value: queue[0].info.author }, {
-                name: "Song Name", value: queue[0].info.title }, {
-                name: "Length", value: queue[0].info.isStream ? 'Livestream' : getYTLength(queue[0].info.length)
-            })
-        message.channel.send(embed);
+        // const embed = new MessageEmbed().setTimestamp();
+        // embed.setTitle('🎵 Now playing!')
+        //     .setThumbnail(`https://i.ytimg.com/vi/${queue[0].info.identifier}/hqdefault.jpg`)
+        //     .addFields({
+        //         name: "Author", value: queue[0].info.author }, {
+        //         name: "Song Name", value: queue[0].info.title }, {
+        //         name: "Length", value: queue[0].info.isStream ? 'Livestream' : getYTLength(queue[0].info.length)
+        //     })
+        // message.channel.send(embed);
         player.once('end', async () => {
             if(!loops[message.guild.id] || loops[message.guild.id] == 0)
                 queue.shift();
@@ -110,27 +109,24 @@ module.exports.run = async (client, message, args) => {
             }
         });
     }
-    const embed = new MessageEmbed().setTimestamp();
-    const betterArgs = args.join(' ');
     let canPlay = false;
     if(client.player.get(message.guild.id) && client.player.get(message.guild.id).paused) music.resume(message, suffix);
-    if (!betterArgs && !client.player.get(message.guild.id)) {
+    if (!args[0] && !client.player.get(message.guild.id)) {
         embed.setTitle('Incorrect args')
              .setDescription(':x: **Provide a song to play**')
         return message.channel.send(embed);
     }
     let queue = getQueue(message.guild.id);
-    let track = await getSong(betterArgs.startsWith(`http`) ? betterArgs : `ytsearch:${betterArgs}`);
+    let track = await getSong(args[0].match(/(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/) ? args[0] : `ytsearch:${args.join(' ')}`);
     if (track instanceof Error) {
         embed.setTitle('Failed')
              .setDescription(`:x: **Track search failed with error**\n\`\`\`xl\n${track.toString()}\n\`\`\``)
         return message.channel.send(embed);
     }
-    const urlParams = new URLSearchParams(args.join(' '));
+    const urlParams = new URLSearchParams(args[0]);
     const myParam = parseInt(urlParams.get('index'));
     if (!track[0]) {
-        embed.setTitle('Failed')
-             .setDescription(':x: **No results found**')
+        embed.setDescription(':x: **No results found**')
         return message.channel.send(embed);
     }
     if (!queue[0]) canPlay = true;
@@ -146,15 +142,19 @@ module.exports.run = async (client, message, args) => {
     } else {
         queue.push(track[0]);
     }
-    message.channel.send({embed: new MessageEmbed()
-        .setTitle(`:musical_note: Added ${urlParams.get('list') ? "a playlist" : "the song"} to queue`)
-        .setThumbnail(`https://i.ytimg.com/vi/${track[0].info.identifier}/hqdefault.jpg`)
+    let playlist_embed = new MessageEmbed()
+        .setTimestamp()
+        .setTitle(':musical_note: Playlist queued')
+        .setDescription(`**${message.author.username}** has added a playlist to the queue`)
+    let song_embed = new MessageEmbed()
+        .setTimestamp()
+        .setTitle(`:musical_note: Added the song to queue`)
+        .setImage(`https://i.ytimg.com/vi/${track[0].info.identifier}/maxresdefault.jpg`)
         .addFields({
-            name: "Author", value: track[0].info.author }, {
-            name: "Song Name", value: `[${track[0].info.title}](${track[0].info.uri})` }, {
+            name: "Channel", value: track[0].info.author }, {
+            name: "Title", value: `[${track[0].info.title}](${track[0].info.uri})` }, {
             name: "Length", value: track[0].info.isStream ? 'Livestream' : getYTLength(track[0].info.length)
         })
-    }) 
     if (canPlay) {
         let theHost = getIdealHost(client, message.guild.region);
         const player = await client.player.join({
@@ -164,6 +164,9 @@ module.exports.run = async (client, message, args) => {
         });
         client.player.get(message.guild.id).node = client.player.nodes.get(theHost);
         execQueue(message, queue, player);
+        return message.channel.send(urlParams.get('list') ? playlist_embed : song_embed);
+    } else {
+        return message.channel.send(urlParams.get('list') ? playlist_embed : song_embed);
     }
 }
 module.exports.help = {

@@ -32,13 +32,17 @@ module.exports.run = async (client, message, args) => {
             return message.channel.send(embed)
         }
         const queue = getQueue(message.guild.id);
-        
+        let position; let duration;
+        if (queue[0].info.isStream) position = '∞';
+        else position = getYTLength(player.state.position);
+        if (queue[0].info.isStream) duration = '∞ **[**Live**]**';
+        else duration = getYTLength(queue[0].info.length);
+
         embed.setTitle('🎵 Now playing!')
-             .setThumbnail(`https://i.ytimg.com/vi/${queue[0].info.identifier}/hqdefault.jpg`)
              .addFields({
-                 name: "Author", value: queue[0].info.author }, {
-                 name: "Song Name", value: queue[0].info.title }, {
-                 name: "Length", value: queue[0].info.isStream ? 'Livestream' : getYTLength(queue[0].info.length)
+                 name: "Channel", value: queue[0].info.author, inline: true }, {
+                 name: "Title", value: `[${queue[0].info.title}](${queue[0].info.uri})`, inline: true }, {
+                 name: "Position", value: `${position}/${duration}`, inline: true
              })
         return message.channel.send(embed);
     } catch (err) {
