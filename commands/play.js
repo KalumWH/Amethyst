@@ -10,10 +10,10 @@ module.exports.run = async (client, message, args) => {
              .setDescription(':x: **Please join a voice channel first**')
         return message.channel.send(embed);
     }
-    if (client.player.get(message.guild.id) && message.member.voice.channel.id !== client.player.get(message.guild.id).channel) {
-        embed.setTitle('Failed')
+    if (client.player.get(message.guild.id) && message.member.voice.channel.id !== message.guild.members.cache.get(message.guild.me.id).voice.channel.id) {
+        let newEmbed = new MessageEmbed().setTitle('Failed')
              .setDescription(':x: **You\'re not in the playing voice channel!**')
-        return message.channel.send(embed);
+        return message.channel.send(newEmbed);
     }
     const defaultRegions = {
         asia: ["sydney", "singapore", "japan", "hongkong"],

@@ -2,14 +2,10 @@ const { MessageEmbed } = require('discord.js');
 const { client, queues } = require('../app.js');
 
 module.exports.run = async (client, message, args) => {
-    let embed = new MessageEmbed().setTimestamp();
+    const embed = new MessageEmbed().setTimestamp();
     let getQueue = (server) => {
 		if(!queues[server]) queues[server] = [];
 		return queues[server];
-    }
-    let trimString = (str, max = 10) => {
-        if (str.length > max) return `${str.substr(0, max)}...`;
-        return str;
     }
     let getYTLength = (millisec) => {
         var seconds = (millisec / 1000).toFixed(0);
@@ -28,22 +24,27 @@ module.exports.run = async (client, message, args) => {
         }
         return minutes + ":" + seconds;
     }
-    const queue = getQueue(message.guild.id);
-    if(!client.player.get(message.guild.id)) {
-        embed.setTitle('Empty')
-             .setDescription('No music is being played in this guild')
+    try {
+        const player = client.player.get(message.guild.id);
+        if(!player) {
+            embed.setTitle('Not playing')
+                 .setDescription('**No song is currently playing**')
+            return message.channel.send(embed)
+        }
+        const queue = getQueue(message.guild.id);
+        
+        embed.setTitle('🎵 Now playing!')
+             .setThumbnail(`https://i.ytimg.com/vi/${queue[0].info.identifier}/hqdefault.jpg`)
+             .addFields({
+                 name: "Author", value: queue[0].info.author }, {
+                 name: "Song Name", value: queue[0].info.title }, {
+                 name: "Length", value: queue[0].info.isStream ? 'Livestream' : getYTLength(queue[0].info.length)
+             })
         return message.channel.send(embed);
+    } catch (err) {
+        return message.channel.send(`**Encountered an error** \`\`\`xl\n${err.message}\n\`\`\``)
     }
-    
-    const text = queue.map((video, index) => 
-        (`\`${(index + 1)}.\` ${video.info.title} - ${trimString(video.info.author, 15)} [**${getYTLength(video.info.length)}**]`))
-        // ('\`' + (index + 1) + '.\` ' + video.info.title + ` (**${getYTLength(video.info.length)}**)`))
-        .join('\n');
-    embed.setTitle(`${message.guild.name} Queue`)
-    .setDescription(`${text}`)
-    return message.channel.send(embed)
-
 }
 module.exports.help = {
-    name: "queue"
+    name: "np"
 }
