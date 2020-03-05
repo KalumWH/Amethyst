@@ -1,7 +1,8 @@
-const disocrd = require("discord.js");
+const discord = require("discord.js");
+const config = require('../config.json');
 
 module.exports.run = async (client, message, args) => {
-  if (message.author.id !== process.env.OWNER) {
+  if (message.author.id !== config.owner) {
      return;
   }
   let argresult = args.join(' ');
