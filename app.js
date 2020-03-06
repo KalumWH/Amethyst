@@ -11,9 +11,9 @@ global.timestamp = new Date().toLocaleTimeString();
 console.log(`[${timestamp}] [HANDLER]  Handler loaded`);
 
 class MusicClient extends Client {
-
     constructor(...args) {
         super(...args);
+        this.ksoft = new KSoftClient(config.api.ksoft)
         this.player = null;
         this.on("ready", () => {
             this.player = new PlayerManager(client, config.nodes, {
@@ -24,8 +24,8 @@ class MusicClient extends Client {
     }
 }
 
-const ksoft = new KSoftClient(config.api.ksoft);
 const client = new MusicClient();
+
 let queues = {};
 let loops = {};
 // Collections
@@ -36,12 +36,11 @@ require('./handlers/commandHandler.js')(client);
 
 //! Custom exports
 module.exports = {
-	client: client,
-	prefix: config.prefix,
-	timestamp: timestamp,
-	queues: queues,
-    loops: loops,
-    ksoft: ksoft
+    client: client,
+    prefix: config.prefix,
+    timestamp: timestamp,
+    queues: queues,
+    loops: loops
 };
 
 //! Login to discord

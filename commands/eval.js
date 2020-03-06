@@ -1,10 +1,11 @@
 const discord = require("discord.js");
 const config = require('../config.json');
-const { client, queues, loops } = require('../app.js');
+const { client, queues, loops, timestamp, prefix, ksoft } = require('../app.js');
 
 module.exports.run = async (client, message, args) => {
+  const player = client.player.get(message.guild.id);
   if (message.author.id !== config.owner) {
-     return;
+    return;
   }
   let argresult = args.join(' ');
   if (!argresult) {

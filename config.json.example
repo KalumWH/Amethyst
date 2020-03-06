@@ -1,10 +1,15 @@
-{ 
+{
     "token": "",
     "owner": "",
     "prefix": "",
-    "nodes": [{
-        "host": "localhost",
-        "port": 2333,
-        "password": "youshallnotpass"
-    }]
+    "nodes": [
+        {
+            "host": "localhost",
+            "port": 2333,
+            "password": "youshallnotpass"
+        }
+    ],
+    "api": {
+        "ksoft": ""
+    }
 }
