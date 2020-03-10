@@ -11,8 +11,6 @@ module.exports.run = async (client, message, args) => {
 
     if(!loops[message.guild.id]) loops[message.guild.id] = 0;
 
-    var ms = loops[message.guild.id]
-
     if(!args[0]) {
         embed.setTitle('Invalid args')
              .setDescription('**You did not provide a valid option**\n\nDisable loop: \`^loop off\`\nLooping song: \`^loop song\`\nLooping Queue: \`^loop queue\`')
@@ -20,17 +18,17 @@ module.exports.run = async (client, message, args) => {
     } else {
         var ar = args[0].toLowerCase();
         if(ar == '0' || ar == 'off') {
-            ms = 0;
+            loops[message.guild.id] = 0;
             embed.setTitle('Success')
                  .setDescription(':white_check_mark: **Loop disabled**')
             message.channel.send(embed);
         } else if(ar == '1' || ar == 'one' || ar == 'song') {
-            ms = 1;
+            loops[message.guild.id] = 1;
             embed.setTitle('Success')
                  .setDescription(':repeat_one: **Looping the current song**')
             message.channel.send(embed);
         } else if(ar == '2' || ar == 'multi' || ar == 'all' || ar == 'queue') {
-            ms = 2;
+            loops[message.guild.id] = 2;
             embed.setTitle('Success')
                  .setDescription(':repeat: **Looping the queue**')
             message.channel.send(embed);

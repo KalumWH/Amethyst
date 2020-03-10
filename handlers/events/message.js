@@ -1,22 +1,22 @@
 const { client, prefix } = require(process.cwd() + '/app.js');
 
 client.on('message', message => {
-	let msg = message.content.toUpperCase();
-  let messageArray = message.content.split(" ");
+  let messageArray = message.content
+      .replace(/ +/g, " ")
+      .split(" ");
   let command = messageArray[0];
-
-  let args = message.content.slice(prefix.length).trim().split(" ");
+  let args = message.content
+      .replace(/ +/g, " ")
+      .slice(prefix.length)
+      .trim()
+      .split(" ");
   let cmd = args.shift().toLowerCase();
-
+  
   if (message.content.startsWith(prefix)) {
     let args = messageArray.slice(1);
     let cmd = client.commands.get(command.slice(prefix.length));
     if (cmd) {
-			try {
-				cmd.run(client, message, args);
-			} catch (e) {
-				client.emit('error', e.message, message.channel);
-			}
-		}
-  };
+      cmd.run(client, message, args);
+    }
+  }
 });

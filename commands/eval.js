@@ -17,20 +17,21 @@ module.exports.run = async (client, message, args) => {
     // if ('silent' in message.flagArgs) return null;
     if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
     if (evaled.includes(config.token)) evaled = '[REDACTED]';
+    if (evaled === "Promise { <pending> }") return;
     let evalResponse = [
+      '**Input**:',
+      `\`\`\`js\n${argresult}\`\`\``,
       '**Output**:',
       `\`\`\`js\n${evaled}\`\`\``,
-      '**Type**:',
-      `\`\`\`js\n${typeof evaled}\`\`\``,
       `:stopwatch: ${client.ws.ping}ms`
     ];
     return message.channel.send(evalResponse.join('\n'));
   } catch (err) {
     let evalErrorResponse = [
+      '**Input**:',
+      `\`\`\`js\n${argresult}\`\`\``,
       '**Output**:',
-      `\`\`\`js\n${err.stack}\`\`\``,
-      '**Type**:',
-      `\`\`\`js\n${err.name}\`\`\``,
+      `\`\`\`xl\n${err.stack}\`\`\``,
       `:stopwatch: ${Math.round(client.ws.ping)}ms`
     ];
     return message.channel.send(evalErrorResponse.join('\n'));

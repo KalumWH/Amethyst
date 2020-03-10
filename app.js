@@ -1,3 +1,4 @@
+// Requiring necessary packages / modules
 const { PlayerManager } = require("./src/index");
 const { KSoftClient } = require('@aero/ksoft');
 const { Client } = require("discord.js");
@@ -10,27 +11,33 @@ global.timestamp = new Date().toLocaleTimeString();
 // Other
 console.log(`[${timestamp}] [HANDLER]  Handler loaded`);
 
-class MusicClient extends Client {
+// Extending the discord.js client
+class AmethystClient extends Client {
     constructor(...args) {
         super(...args);
-        this.ksoft = new KSoftClient(config.api.ksoft)
+        this.ksoft = new KSoftClient(config.api.ksoft);
         this.player = null;
         this.on("ready", () => {
             this.player = new PlayerManager(client, config.nodes, {
                 user: client.user.id,
                 shards: null
             });
-        }).on("error", console.error).on("warn", console.warn);
+        }).on("warn", console.warn);
     }
 }
 
-const client = new MusicClient();
+// New extended client
+const client = new AmethystClient();
 
+// Objects for queue/loop
 let queues = {};
 let loops = {};
-// Collections
+
+// Collections for commands and events
 client.commands = new discord.Collection();
 client.events = new discord.Collection();
+
+// Handlers passing the client object
 require('./handlers/eventHandler.js')(client);
 require('./handlers/commandHandler.js')(client);
 

@@ -118,7 +118,7 @@ module.exports.run = async (client, message, args) => {
         return message.channel.send(embed);
     }
     let queue = getQueue(message.guild.id);
-    let track = await getSong(args[0].match(/(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/) ? args[0] : `ytsearch:${args.join(' ')}`);
+    let track = await getSong(args[0].match(/(https\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/i) ? args[0] : `ytsearch:${args.join(' ')}`);
     if (track instanceof Error) {
         embed.setTitle('Failed')
             .setDescription(`:x: **Track search failed with error**\n\`\`\`xl\n${track.toString()}\n\`\`\``)
@@ -146,18 +146,16 @@ module.exports.run = async (client, message, args) => {
     let playlist_embed = new MessageEmbed()
         .setTimestamp()
         .setTitle(':musical_note: Playlist queued')
-        .setDescription(`**${message.author.username}** has added a playlist to the queue`)
+        .setDescription(`A playlist has been added to the queue by **${message.author.username}**`)
     let song_embed = new MessageEmbed()
         .setTimestamp()
         .setTitle(`:musical_note: Added the song to queue`)
         .setImage(`https://i.ytimg.com/vi/${track[0].info.identifier}/maxresdefault.jpg`)
         .addFields({
-            name: "Channel", value: track[0].info.author
-        }, {
-            name: "Title", value: `[${track[0].info.title}](${track[0].info.uri})`
-        }, {
+            name: "Channel", value: track[0].info.author}, {
+            name: "Title", value: `[${track[0].info.title}](${track[0].info.uri})`}, {
             name: "Length", value: track[0].info.isStream ? 'Livestream' : getYTLength(track[0].info.length)
-        })
+        });
     if (canPlay) {
         let theHost = getIdealHost(client, message.guild.region);
         const player = await client.player.join({
@@ -169,7 +167,7 @@ module.exports.run = async (client, message, args) => {
         execQueue(message, queue, player);
         return message.channel.send(urlParams.get('list') ? playlist_embed : song_embed);
     } else {
-        return message.channel.send(urlParams.get('list') ? playlist_embed : song_embed);
+        return message.channel.send(!urlParams.get('list') ? song_embed : playlist_embed);
     }
 }
 module.exports.help = {
